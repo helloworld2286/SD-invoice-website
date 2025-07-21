@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Select Invoice Type</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 500px;
+    }
+    h2 {
+      color: #1f2937;
+      margin-bottom: 30px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn.official {
+      background-color: #3b82f6;
+      color: white;
+    }
+    .btn.official:hover {
+      background-color: #2563eb;
+    }
+    .btn.unofficial {
+      background-color: #f59e0b;
+      color: white;
+    }
+    .btn.unofficial:hover {
+      background-color: #d97706;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Select Invoice Type</h2>
+    <button class="btn official" onclick="selectInvoice('official')">Official Invoice</button>
+    <button class="btn unofficial" onclick="selectInvoice('unofficial')">Unofficial Invoice</button>
+  </div>
+
+  <script>
+  function selectInvoice(type) {
+    if (type === 'official') {
+      window.location.href = 'officialinvoice.html';
+    } else {
+      window.location.href = 'invoice.html';
+    }
+  }
+</script>
+</body>
+</html>
