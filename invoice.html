@@ -217,8 +217,8 @@
         }
 
         rows.push(["", "", "", "Total", `$${grandTotal.toFixed(2)}`]);
-        rows.push(["", "", "", "Deposit", `$${deposit.toFixed(2)}`]);
-        rows.push(["", paidNote || "No Refund!! No Return!!", "", "Due", `$${due.toFixed(2)}`]);
+        rows.push(["", "No Refund!! No Return!!", "", "Deposit", `$${deposit.toFixed(2)}`]);
+        rows.push(["", paidNote || "", "", "Due", `$${due.toFixed(2)}`]);
 
         doc.setFontSize(12);
         doc.text(`Invoice No.: ${invoiceNo}`, 10, 55);
