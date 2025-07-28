@@ -10,78 +10,78 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f9fafb;
+      background-color: #f0f2f5;
       margin: 0;
-      padding: 0;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      padding-top: 40px;
+      align-items: center;
+      min-height: 100vh;
     }
     .container {
       background: #ffffff;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
       width: 100%;
-      max-width: 600px;
+      max-width: 700px;
     }
     .logo {
-      width: 180px;
+      width: 160px;
       display: block;
-      margin: 0 auto 5px;
+      margin: 0 auto 10px;
     }
-    h2 {
+    h1 {
       text-align: center;
+      font-size: 18px;
       margin-bottom: 30px;
-      color: #111827;
+      color: #1f2937;
     }
     label {
       display: block;
       margin-bottom: 6px;
-      color: #374151;
+      color: #4b5563;
       font-weight: 600;
     }
+
     input[type="text"],
     input[type="number"],
     input[type="date"] {
       width: 100%;
-      padding: 12px 14px;
-      margin-bottom: 15px;
+      padding: 12px;
+      margin-bottom: 16px;
       border: 1px solid #d1d5db;
       border-radius: 8px;
       background-color: #f9fafb;
       font-size: 14px;
-      color: #111827;
     }
     .item-group {
       display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 12px;
+      margin-bottom: 12px;
     }
     .item-group input {
       flex: 1;
     }
     .add-btn {
-      display: block;
-      margin: 10px auto;
-      padding: 8px 16px;
+      display: inline-block;
+      padding: 10px 18px;
       font-size: 14px;
       background-color: #10b981;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      margin-bottom: 20px;
     }
     button {
       width: 100%;
       background-color: #3b82f6;
       color: white;
-      padding: 12px;
+      padding: 14px;
       font-size: 16px;
       font-weight: 600;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       transition: background-color 0.3s;
     }
@@ -92,30 +92,39 @@
       margin-top: 30px;
       font-size: 13px;
       color: #6b7280;
-      line-height: 1.4;
       text-align: center;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 20px;
+    }
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .checkbox-container input {
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <img src="logo.png" class="logo" alt="Company Logo">
-    <h2>Generate Invoice</h2>
+    <h1>SATYAM DIAMONDS</h1>
 
     <label>Invoice No:</label>
-    <input id="invoiceNo" value="1001">
+    <input id="invoiceNo" type="number" placeholder="Enter invoice number">
 
     <label>Date:</label>
     <input id="date" type="date">
 
     <label>Customer Name:</label>
-    <input id="customerName">
+    <input id="customerName" type="text" placeholder="Enter customer name">
 
     <label>Customer Address:</label>
-    <input id="customerAddress">
+    <input id="customerAddress" type="text" placeholder="Enter customer address">
 
     <label>Customer Phone:</label>
-    <input id="customerPhone">
+    <input id="customerPhone" type="number" placeholder="Enter customer phone number">
 
     <div id="itemsContainer">
       <label>Item Description and Price:</label>
@@ -128,18 +137,18 @@
     <button class="add-btn" onclick="addItem()">+ Add Another Item</button>
 
     <label>Deposit:</label>
-    <input id="deposit" type="number">
+    <input id="deposit" type="number" placeholder="Enter deposit amount">
 
-    <label>
-      <input type="checkbox" id="fullPaidCheckbox"> Full Amount Paid
-    </label>
+    <div class="checkbox-container">
+      <input type="checkbox" id="fullPaidCheckbox">
+      <label for="fullPaidCheckbox">Full Amount Paid</label>
+    </div>
 
     <button onclick="generatePDF()">Download Invoice</button>
 
     <div class="footer">
-      <p>Satyam Diamonds<br>
-      Suite #1503, 4 Robert Speck Parkway<br>
-      Mississauga, ON<br>
+      <p><strong>Satyam Diamonds</strong><br>
+      Suite #1503, 4 Robert Speck Parkway, Mississauga, ON<br>
       +1 437-522-2466 | info@satyamdiamond.com</p>
     </div>
   </div>
@@ -208,8 +217,8 @@
         }
 
         rows.push(["", "", "", "Total", `$${grandTotal.toFixed(2)}`]);
-        rows.push(["", "No Refund!! No Return!!", "", "Deposit", `$${deposit.toFixed(2)}`]);
-        rows.push(["", paidNote || "", "", "Due", `$${due.toFixed(2)}`]);
+        rows.push(["", "", "", "Deposit", `$${deposit.toFixed(2)}`]);
+        rows.push(["", paidNote || "No Refund!! No Return!!", "", "Due", `$${due.toFixed(2)}`]);
 
         doc.setFontSize(12);
         doc.text(`Invoice No.: ${invoiceNo}`, 10, 55);
