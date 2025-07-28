@@ -42,7 +42,9 @@
       color: #374151;
       font-weight: 600;
     }
-    input {
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
       width: 100%;
       padding: 12px 14px;
       margin-bottom: 15px;
@@ -128,6 +130,10 @@
     <label>Deposit:</label>
     <input id="deposit" type="number">
 
+    <label>
+      <input type="checkbox" id="fullPaidCheckbox"> Full Amount Paid
+    </label>
+
     <button onclick="generatePDF()">Download Invoice</button>
 
     <div class="footer">
@@ -170,6 +176,7 @@
         const customerAddress = document.getElementById("customerAddress").value;
         const customerPhone = document.getElementById("customerPhone").value;
         const deposit = parseFloat(document.getElementById("deposit").value) || 0;
+        const isPaid = document.getElementById("fullPaidCheckbox").checked;
 
         const itemGroups = document.querySelectorAll(".item-group");
         const rows = [["No.", "Item Description", "Unit Price", "Discount", "Total"]];
@@ -192,12 +199,17 @@
             `$${total.toFixed(2)}`
           ]);
         });
-        
-        const due = grandTotal - deposit;
+
+        let due = grandTotal - deposit;
+        let paidNote = "";
+        if (isPaid) {
+          due = 0;
+          paidNote = "FULL AMOUNT PAID";
+        }
 
         rows.push(["", "", "", "Total", `$${grandTotal.toFixed(2)}`]);
-        rows.push(["", "", "", "Deposit", `$${deposit.toFixed(2)}`]);
-        rows.push(["", "No Refund!! No Return!!", "", "Due", `$${due.toFixed(2)}`]);
+        rows.push(["", "No Refund!! No Return!!", "", "Deposit", `$${deposit.toFixed(2)}`]);
+        rows.push(["", paidNote || "", "", "Due", `$${due.toFixed(2)}`]);
 
         doc.setFontSize(12);
         doc.text(`Invoice No.: ${invoiceNo}`, 10, 55);
