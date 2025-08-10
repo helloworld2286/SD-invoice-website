@@ -1,230 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invoice Generator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Generator (Improved UI)</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+    :root{
+      --bg:#f0f2f5; --card:#fff; --ink:#1f2937; --muted:#6b7280; --brand:#3b82f6; --accent:#10b981; --danger:#ef4444; --border:#e5e7eb;
     }
-    .container {
-      background: #ffffff;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 700px;
-    }
-    .logo {
-      width: 160px;
-      display: block;
-      margin: 0 auto 10px;
-    }
-    h1 {
-      text-align: center;
-      font-size: 18px;
-      margin-bottom: 30px;
-      color: #1f2937;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      color: #4b5563;
-      font-weight: 600;
-    }
+    *{box-sizing:border-box}
+    body{font-family:'Inter',system-ui,Arial,sans-serif;background:var(--bg);margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;color:var(--ink)}
+    .container{background:var(--card);padding:40px;border-radius:16px;box-shadow:0 15px 30px rgba(0,0,0,.08);width:100%;max-width:760px}
+    .logo{width:160px;display:block;margin:0 auto 10px}
+    h1{text-align:center;font-size:18px;margin-bottom:24px;color:var(--ink)}
+    label{display:block;margin-bottom:6px;color:#4b5563;font-weight:600}
+    input[type="text"], input[type="number"], input[type="date"], textarea{width:100%;padding:12px;margin-bottom:14px;border:1px solid #d1d5db;border-radius:10px;background:#f9fafb;font-size:14px}
+    textarea{resize:vertical;min-height:72px}
+    .items-head{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+    .add-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;font-size:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;cursor:pointer}
 
-    input[type="text"],
-    input[type="number"],
-    input[type="date"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      background-color: #f9fafb;
-      font-size: 14px;
-    }
-    .item-group {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .item-group input {
-      flex: 1;
-    }
-    .add-btn {
-      display: inline-block;
-      padding: 10px 18px;
-      font-size: 14px;
-      background-color: #10b981;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-bottom: 20px;
-    }
-    button {
-      width: 100%;
-      background-color: #3b82f6;
-      color: white;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #2563eb;
-    }
-    .footer {
-      margin-top: 30px;
-      font-size: 13px;
-      color: #6b7280;
-      text-align: center;
-      border-top: 1px solid #e5e7eb;
-      padding-top: 20px;
-    }
-    .checkbox-container {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .checkbox-container input {
-      margin-right: 10px;
+    /* Item row grid */
+    .item-group{display:grid;grid-template-columns:1fr 130px 130px 44px;gap:12px;margin-bottom:12px;align-items:start}
+    .item-group input[type="number"]{margin-bottom:0}
+    .remove-btn{width:44px;height:44px;border:1px solid var(--border);background:#fff;border-radius:10px;color:var(--danger);font-size:18px;cursor:pointer}
+    .remove-btn:hover{background:#fff0f0}
+
+    .actions button{width:100%;background:var(--brand);color:#fff;padding:14px;font-size:16px;font-weight:600;border:none;border-radius:12px;cursor:pointer;transition:filter .2s}
+    .actions button:hover{filter:brightness(.95)}
+    .footer{margin-top:24px;font-size:13px;color:var(--muted);text-align:center;border-top:1px solid var(--border);padding-top:16px}
+    .checkbox-container{display:flex;align-items:center;margin:6px 0 18px}
+    .checkbox-container input{margin-right:10px}
+
+    @media (max-width:640px){
+      .item-group{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
+      .item-group .remove-btn{grid-column:2 / 3}
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="logo.png" class="logo" alt="Company Logo">
+    <img src="logo.png" class="logo" alt="Company Logo" />
     <h1>SATYAM DIAMONDS</h1>
 
     <label>Invoice No:</label>
-    <input id="invoiceNo" type="number" placeholder="Enter invoice number">
+    <input id="invoiceNo" type="number" placeholder="Enter invoice number" />
 
     <label>Date:</label>
-    <input id="date" type="date">
+    <input id="date" type="date" />
 
     <label>Customer Name:</label>
-    <input id="customerName" type="text" placeholder="Enter customer name">
+    <input id="customerName" type="text" placeholder="Enter customer name" />
 
     <label>Customer Address:</label>
-    <input id="customerAddress" type="text" placeholder="Enter customer address">
+    <input id="customerAddress" type="text" placeholder="Enter customer address" />
 
     <label>Customer Phone:</label>
-    <input id="customerPhone" type="number" placeholder="Enter customer phone number">
+    <input id="customerPhone" type="number" placeholder="Enter customer phone number" />
 
-    <div id="itemsContainer">
-      <label>Item Description and Price:</label>
-      <div class="item-group">
-        <input type="text" placeholder="Item Description">
-        <input type="number" placeholder="Unit Price">
-        <input type="number" placeholder="Discount">
-      </div>
+    <div class="items-head">
+      <label>Items</label>
+      <button class="add-btn" id="addItemBtn" type="button">+ Add Item</button>
     </div>
-    <button class="add-btn" onclick="addItem()">+ Add Another Item</button>
+
+    <div id="itemsContainer"></div>
 
     <label>Deposit:</label>
-    <input id="deposit" type="number" placeholder="Enter deposit amount">
+    <input id="deposit" type="number" placeholder="Enter deposit amount" />
 
     <div class="checkbox-container">
-      <input type="checkbox" id="fullPaidCheckbox">
+      <input type="checkbox" id="fullPaidCheckbox" />
       <label for="fullPaidCheckbox">Full Amount Paid</label>
     </div>
 
-    <button onclick="generatePDF()">Download Invoice</button>
+    <div class="actions">
+      <button type="button" id="downloadBtn">Download Invoice</button>
+    </div>
 
     <div class="footer">
-      <p><strong>Satyam Diamonds</strong><br>
-      Suite #1503, 4 Robert Speck Parkway, Mississauga, ON<br>
+      <p><strong>Satyam Diamonds</strong><br />
+      Suite #1503, 4 Robert Speck Parkway, Mississauga, ON<br />
       +1 437-522-2466 | info@satyamdiamond.com</p>
     </div>
   </div>
 
   <script>
-    function addItem() {
-      const container = document.getElementById("itemsContainer");
-      const div = document.createElement("div");
-      div.className = "item-group";
-      div.innerHTML = `
-        <input type="text" placeholder="Item Description">
-        <input type="number" placeholder="Unit Price">
-        <input type="number" placeholder="Discount">
-      `;
-      container.appendChild(div);
+    // --- Helpers ---
+    function createItem(description = '', unitPrice = '', discount = ''){
+      const row = document.createElement('div');
+      row.className = 'item-group';
+      row.innerHTML = `
+        <div>
+          <label style="margin-bottom:6px;color:#4b5563;font-weight:600">Description</label>
+          <textarea placeholder="Item description (multi‑line)" rows="3">${description}</textarea>
+        </div>
+        <div>
+          <label style="margin-bottom:6px;color:#4b5563;font-weight:600">Unit Price</label>
+          <input type="number" placeholder="0.00" value="${unitPrice}" />
+        </div>
+        <div>
+          <label style="margin-bottom:6px;color:#4b5563;font-weight:600">Discount</label>
+          <input type="number" placeholder="0.00" value="${discount}" />
+        </div>
+        <div>
+          <label style="opacity:0">Remove</label>
+          <button type="button" class="remove-btn" aria-label="Remove item">×</button>
+        </div>`;
+      return row;
     }
 
-    function generatePDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+    const itemsContainer = document.getElementById('itemsContainer');
+    const addItemBtn = document.getElementById('addItemBtn');
 
+    function addItem(){
+      itemsContainer.appendChild(createItem());
+    }
+
+    function ensureAtLeastOne(){
+      if(!itemsContainer.querySelector('.item-group')) addItem();
+    }
+
+    // Initial row
+    addItem();
+
+    // Add item handler
+    addItemBtn.addEventListener('click', addItem);
+
+    // Delete item (event delegation)
+    itemsContainer.addEventListener('click', (e)=>{
+      if(e.target.classList.contains('remove-btn')){
+        const row = e.target.closest('.item-group');
+        row.remove();
+        ensureAtLeastOne();
+      }
+    });
+
+    // --- PDF Generation ---
+    document.getElementById('downloadBtn').addEventListener('click', generatePDF);
+
+    function generatePDF(){
+      const { jsPDF } = window.jspdf; const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.getWidth();
-      const logoWidth = 90;
-      const x = (pageWidth - logoWidth) / 2;
+      const logoWidth = 90; const x = (pageWidth - logoWidth) / 2;
 
-      const logoImg = new Image();
-      logoImg.src = 'logo.png';
+      const logoImg = new Image(); logoImg.src = 'logo.png';
       logoImg.onload = () => {
         doc.addImage(logoImg, 'PNG', x, 5, 80, 60);
 
-        const invoiceNo = document.getElementById("invoiceNo").value;
-        const date = document.getElementById("date").value;
-        const customerName = document.getElementById("customerName").value;
-        const customerAddress = document.getElementById("customerAddress").value;
-        const customerPhone = document.getElementById("customerPhone").value;
-        const deposit = parseFloat(document.getElementById("deposit").value) || 0;
-        const isPaid = document.getElementById("fullPaidCheckbox").checked;
+        const invoiceNo = document.getElementById('invoiceNo').value || '';
+        const date = document.getElementById('date').value || '';
+        const customerName = document.getElementById('customerName').value || '';
+        const customerAddress = document.getElementById('customerAddress').value || '';
+        const customerPhone = document.getElementById('customerPhone').value || '';
+        const deposit = parseFloat(document.getElementById('deposit').value) || 0;
+        const isPaid = document.getElementById('fullPaidCheckbox').checked;
 
-        const itemGroups = document.querySelectorAll(".item-group");
         const rows = [["No.", "Item Description", "Unit Price", "Discount", "Total"]];
-
         let grandTotal = 0;
 
-        itemGroups.forEach((group, index) => {
-          const inputs = group.querySelectorAll("input");
-          const desc = inputs[0].value;
-          const unitPrice = parseFloat(inputs[1].value) || 0;
-          const discount = parseFloat(inputs[2].value) || 0;
+        itemsContainer.querySelectorAll('.item-group').forEach((group, i)=>{
+          const desc = group.querySelector('textarea').value.trim();
+          const unitPrice = parseFloat(group.querySelectorAll('input')[0].value) || 0;
+          const discount = parseFloat(group.querySelectorAll('input')[1].value) || 0;
           const total = unitPrice - discount;
           grandTotal += total;
-
           rows.push([
-            `${index + 1}`,
-            desc,
+            String(i+1),
+            desc || '-',
             `$${unitPrice.toFixed(2)}`,
             `$${discount.toFixed(2)}`,
             `$${total.toFixed(2)}`
           ]);
         });
 
-        let due = grandTotal - deposit;
-        let paidNote = "";
-        if (isPaid) {
-          due = 0;
-          paidNote = "FULL AMOUNT PAID";
-        }
+        let due = grandTotal - deposit; let paidNote = '';
+        if(isPaid){ due = 0; paidNote = 'FULL AMOUNT PAID'; }
 
         rows.push(["", "", "", "Total", `$${grandTotal.toFixed(2)}`]);
-        rows.push(["", "", "", "Deposit", `$${deposit.toFixed(2)}`]);
+        rows.push(["", "No Refund!! No Return!!", "", "Deposit", `$${deposit.toFixed(2)}`]);
         rows.push(["", paidNote || "", "", "Due", `$${due.toFixed(2)}`]);
-        rows.push(["", "No Refund!! No Return!!", "", "", ""]);
 
         doc.setFontSize(12);
         doc.text(`Invoice No.: ${invoiceNo}`, 10, 55);
         doc.text(`Date: ${date}`, 150, 55);
-        doc.text(`Bill To`, 10, 65);
+        doc.text('Bill To', 10, 65);
         doc.text(`Customer Name: ${customerName}`, 10, 71);
         doc.text(`Address: ${customerAddress}`, 10, 77);
         doc.text(`Phone: ${customerPhone}`, 10, 83);
@@ -233,25 +194,24 @@
           startY: 90,
           body: rows,
           theme: 'grid',
-          styles: { fontSize: 12, cellPadding: 3 },
+          styles: { fontSize: 12, cellPadding: 3, overflow: 'linebreak' },
           columnStyles: {
-            0: { cellWidth: 20 },
-            1: { cellWidth: 80 },
+            0: { cellWidth: 18 },
+            1: { cellWidth: 90 }, // wider description, will wrap lines
             2: { cellWidth: 25 },
             3: { cellWidth: 25 },
-            4: { cellWidth: 25 },
+            4: { cellWidth: 25 }
           }
         });
 
-        doc.text("Thanks for your business!", 105, doc.lastAutoTable.finalY + 15, { align: 'center' });
+        doc.text('Thanks for your business!', 105, doc.lastAutoTable.finalY + 15, { align: 'center' });
 
-        const footerY = doc.lastAutoTable.finalY + 30;
-        doc.setFontSize(12);
-        doc.text("Satyam Diamonds", 10, footerY);
-        doc.text("Suite #1503, 4 Robert Speck Parkway, Mississauga", 10, footerY + 6);
-        doc.text("+1 437-522-2466 | info@satyamdiamond.com", 10, footerY + 12);
+        const footerY = doc.lastAutoTable.finalY + 30; doc.setFontSize(12);
+        doc.text('Satyam Diamonds', 10, footerY);
+        doc.text('Suite #1503, 4 Robert Speck Parkway, Mississauga', 10, footerY + 6);
+        doc.text('+1 437-522-2466 | info@satyamdiamond.com', 10, footerY + 12);
 
-        doc.save(`Invoice_${invoiceNo}.pdf`);
+        doc.save(`Invoice_${invoiceNo || 'Draft'}.pdf`);
       };
     }
   </script>
